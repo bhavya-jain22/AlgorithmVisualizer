@@ -19,7 +19,7 @@ public class BellmanFordSolver {
         // This is the core of Bellman-Ford. It iterates through every single edge
         // repeatedly.
         for (int i = 0; i < V - 1; i++) {
-            boolean updated = false; // Optimization flag
+            boolean updated = false;
 
             for (Router u : graph.allRouters) {
                 if (distMap.get(u) == Integer.MAX_VALUE / 2)
@@ -35,7 +35,7 @@ public class BellmanFordSolver {
                     Router v = edge.targetRouter;
                     int weight = edge.weight;
 
-                    // If we found a shorter path to 'v' through 'u', update it
+                    // if we found shorter path update dist
                     if (distMap.get(u) + weight < distMap.get(v)) {
                         distMap.put(v, distMap.get(u) + weight);
                         parentMap.put(v, u);
@@ -48,7 +48,7 @@ public class BellmanFordSolver {
                 break;
         }
 
-        // Build the final path (Same logic as your A* reconstructor)
+        // Building final path
         if (!parentMap.containsKey(end) && start.id != end.id) {
             return new PathResult(new ArrayList<>(), -1, nodesVisited); // No path found
         }
