@@ -3,6 +3,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.awt.geom.Point2D;
+
 public class Main {
     private static JFrame frame;
     private static PacketPanel currentPanel;

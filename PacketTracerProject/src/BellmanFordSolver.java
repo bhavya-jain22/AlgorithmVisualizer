@@ -7,16 +7,15 @@ public class BellmanFordSolver {
         HashMap<Router, Router> parentMap = new HashMap<>();
         int nodesVisited = 0;
 
-        // 1. Initialize all distances to "Infinity" (using Max Value / 2 to avoid
-        // integer overflow)
+        // Initialize distances to infinity
         for (Router r : graph.allRouters) {
             distMap.put(r, Integer.MAX_VALUE / 2);
         }
-        distMap.put(start, 0); // Distance to start node is always 0
+        distMap.put(start, 0); // Distance of start node is always 0
 
         int V = graph.allRouters.size();
 
-        // 2. Relax all edges V - 1 times
+        // Relax all edges V - 1 times
         // This is the core of Bellman-Ford. It iterates through every single edge
         // repeatedly.
         for (int i = 0; i < V - 1; i++) {
@@ -26,12 +25,12 @@ public class BellmanFordSolver {
                 if (distMap.get(u) == Integer.MAX_VALUE / 2)
                     continue;
 
-                nodesVisited++; // Tracking this for the UI scoreboard
+                nodesVisited++; // for analysis
 
                 // Check all cables connected to router 'u'
                 for (Cable edge : graph.adjList.get(u)) {
                     if (edge.isBroken)
-                        continue; // CRITICAL: Ignore user-broken cables
+                        continue; //skip if broken
 
                     Router v = edge.targetRouter;
                     int weight = edge.weight;
@@ -49,7 +48,7 @@ public class BellmanFordSolver {
                 break;
         }
 
-        // 3. Build the final path (Same logic as your A* reconstructor)
+        // Build the final path (Same logic as your A* reconstructor)
         if (!parentMap.containsKey(end) && start.id != end.id) {
             return new PathResult(new ArrayList<>(), -1, nodesVisited); // No path found
         }
