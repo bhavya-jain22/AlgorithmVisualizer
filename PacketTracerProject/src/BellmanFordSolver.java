@@ -17,7 +17,7 @@ public class BellmanFordSolver {
         int V = graph.allRouters.size();
 
         // 2. Relax all edges V - 1 times
-        // This is the core of Bellman-Ford. It iterates through every single edge
+        //iterates through every single edge
         // repeatedly.
         for (int i = 0; i < V - 1; i++) {
             boolean updated = false; // Optimization flag
@@ -31,7 +31,7 @@ public class BellmanFordSolver {
                 // Check all cables connected to router 'u'
                 for (Cable edge : graph.adjList.get(u)) {
                     if (edge.isBroken)
-                        continue; // CRITICAL: Ignore user-broken cables
+                        continue; // Ignore user-broken cables
 
                     Router v = edge.targetRouter;
                     int weight = edge.weight;
@@ -44,12 +44,12 @@ public class BellmanFordSolver {
                     }
                 }
             }
-            // If we went through all edges and didn't update anything, we can stop early!
+            // If we went through all edges and didnt update anything
             if (!updated)
                 break;
         }
 
-        // 3. Build the final path (Same logic as your A* reconstructor)
+        // 3. Build the final path 
         if (!parentMap.containsKey(end) && start.id != end.id) {
             return new PathResult(new ArrayList<>(), -1, nodesVisited); // No path found
         }

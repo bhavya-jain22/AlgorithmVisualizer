@@ -1,3 +1,6 @@
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 public class Main {
     public static void main(String[] args) {
         System.out.println("--- Booting up PacketTracer Backend Test ---");
@@ -38,5 +41,16 @@ public class Main {
 
         System.out.println("\n==========================================");
         
+        System.out.println("Launching GUI Visualizer...");
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        SwingUtilities.invokeLater(() -> {
+            PacketTracerGUI gui = new PacketTracerGUI(graph, controller);
+            gui.setVisible(true);
+        });
     }
 }
