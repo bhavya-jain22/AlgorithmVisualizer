@@ -32,9 +32,10 @@ public class BenchmarkChartGUI extends JFrame {
         
         explanation.setText("📊 What does this graph mean?\n\n" +
             "This graph shows how much 'thinking' each algorithm had to do to find the correct path in a chaotic, broken network.\n\n" +
-            "🟢 A* (Green): Has the lowest bar because it is 'smart'. It uses a heuristic (like a compass) to only search the nodes heading towards the target. It finds the shortest path while exploring the least amount of the network.\n\n" +
-            "🔵 Dijkstra (Blue): Has a medium bar. It expands in a circle in all directions like a ripple in a pond. It works perfectly, but wastes time checking routers going in the wrong direction.\n\n" +
-            "🟣 Bellman-Ford (Purple): Has the highest bar. It brutally checks the entire network over and over again to ensure it finds the shortest path. It takes the most memory and time.");
+            "🟢 A* (Green): Lowest bar because it is 'smart'. Uses a heuristic to search towards the target.\n\n" +
+            "🔵 Dijkstra (Blue): Medium bar. Expands in all directions like a ripple in a pond.\n\n" +
+            "🟣 Bellman-Ford (Purple): Highest bar. Brutally checks the entire network over and over again.\n\n" +
+            "🟠 BFS (Orange): Checks nodes hop by hop without caring about cable latency/weight.");
             
         add(explanation, BorderLayout.SOUTH);
     }
@@ -49,8 +50,8 @@ public class BenchmarkChartGUI extends JFrame {
             g2d.setColor(Color.WHITE);
             g2d.fillRect(0, 0, getWidth(), getHeight());
 
-            String[] algos = {"A*", "Dijkstra", "Bellman-Ford"};
-            Color[] colors = {new Color(46, 204, 113), new Color(52, 152, 219), new Color(155, 89, 182)};
+            String[] algos = {"A*", "Dijkstra", "Bellman-Ford", "BFS"};
+            Color[] colors = {new Color(46, 204, 113), new Color(52, 152, 219), new Color(155, 89, 182), new Color(230, 126, 34)};
 
             int maxVal = 0;
             for (Double v : averageNodesExplored.values()) {
@@ -59,8 +60,8 @@ public class BenchmarkChartGUI extends JFrame {
             if (maxVal == 0) maxVal = 1;
 
             int startY = 380;
-            int startX = 150;
-            int barWidth = 100;
+            int startX = 100;
+            int barWidth = 90;
             int spacing = 60;
 
             // Draw Title

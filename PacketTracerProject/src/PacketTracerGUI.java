@@ -29,8 +29,6 @@ public class PacketTracerGUI extends JFrame {
     
     // New feature controls
     private JLabel bfsNodesLbl, bfsCostLbl;
-    private boolean showMST = false;
-    private java.util.List<KruskalMST.Edge> mstEdges = new java.util.ArrayList<>();
     private JLabel bigOLabel;
 
     // Classic Modern Colors
@@ -68,20 +66,20 @@ public class PacketTracerGUI extends JFrame {
         algoSelector.addActionListener(e -> { updateDisplayedPath(); updateBigO(); });
         row1.add(algoSelector);
         
-        runBtn = new JButton("▶ Run Packet");
-        runBtn.setBackground(new Color(52, 152, 219)); runBtn.setForeground(Color.WHITE);
+        runBtn = new JButton("Run Packet");
+        runBtn.setForeground(Color.BLACK); runBtn.setBackground(new Color(220, 220, 220)); runBtn.setOpaque(true);
         runBtn.setFocusPainted(false);
         runBtn.addActionListener(e -> runSinglePacket());
         row1.add(runBtn);
         
-        raceBtn = new JButton("🏆 Race All");
-        raceBtn.setBackground(new Color(155, 89, 182)); raceBtn.setForeground(Color.WHITE);
+        raceBtn = new JButton("Race All");
+        raceBtn.setForeground(Color.BLACK); raceBtn.setBackground(new Color(220, 220, 220)); raceBtn.setOpaque(true);
         raceBtn.setFocusPainted(false);
         raceBtn.addActionListener(e -> startRace());
         row1.add(raceBtn);
         
-        benchmarkBtn = new JButton("🔥 Harsh Benchmark");
-        benchmarkBtn.setBackground(new Color(231, 76, 60)); benchmarkBtn.setForeground(Color.WHITE);
+        benchmarkBtn = new JButton("Harsh Benchmark");
+        benchmarkBtn.setForeground(Color.BLACK); benchmarkBtn.setBackground(new Color(220, 220, 220)); benchmarkBtn.setOpaque(true);
         benchmarkBtn.setFocusPainted(false);
         benchmarkBtn.addActionListener(e -> runHarshBenchmark());
         row1.add(benchmarkBtn);
@@ -102,28 +100,7 @@ public class PacketTracerGUI extends JFrame {
         JButton meshBtn   = makeTopologyBtn("Mesh",  () -> switchTopology("Mesh"));
         row2.add(gridBtn); row2.add(ringBtn); row2.add(starBtn); row2.add(meshBtn);
         
-        JButton mstBtn = new JButton("🌲 Show MST");
-        mstBtn.setBackground(new Color(39, 174, 96));
-        mstBtn.setForeground(Color.WHITE); mstBtn.setFocusPainted(false);
-        mstBtn.addActionListener(e -> {
-            showMST = !showMST;
-            mstBtn.setText(showMST ? "❌ Hide MST" : "🌲 Show MST");
-            if (showMST) { mstEdges = new KruskalMST().computeMST(graph); }
-            networkPanel.setMSTEdges(showMST ? mstEdges : null);
-        });
-        row2.add(mstBtn);
-        
-        JButton stepBfsBtn = new JButton("👣 Step BFS");
-        stepBfsBtn.setBackground(new Color(52, 73, 94));
-        stepBfsBtn.setForeground(Color.WHITE); stepBfsBtn.setFocusPainted(false);
-        stepBfsBtn.addActionListener(e -> openStepByStep("BFS"));
-        row2.add(stepBfsBtn);
-        
-        JButton stepDijkBtn = new JButton("👣 Step Dijkstra");
-        stepDijkBtn.setBackground(new Color(52, 73, 94));
-        stepDijkBtn.setForeground(Color.WHITE); stepDijkBtn.setFocusPainted(false);
-        stepDijkBtn.addActionListener(e -> openStepByStep("Dijkstra"));
-        row2.add(stepDijkBtn);
+
         
         headerPanel.add(row2);
         add(headerPanel, BorderLayout.NORTH);
@@ -209,7 +186,7 @@ public class PacketTracerGUI extends JFrame {
         
         sidebar.add(Box.createVerticalGlue());
         
-        JTextArea hintText = new JTextArea("Hint: Click any cable to BREAK it. Use topology buttons to switch graph type. Show MST draws the cheapest backbone network.");
+        JTextArea hintText = new JTextArea("Hint: Click any cable to BREAK it. Use topology buttons to switch graph type.");
         hintText.setWrapStyleWord(true);
         hintText.setLineWrap(true);
         hintText.setEditable(false);
@@ -308,8 +285,9 @@ public class PacketTracerGUI extends JFrame {
     
     private JButton makeTopologyBtn(String label, Runnable action) {
         JButton btn = new JButton(label);
-        btn.setBackground(new Color(52, 73, 94));
-        btn.setForeground(Color.WHITE);
+        btn.setBackground(new Color(220, 220, 220));
+        btn.setForeground(Color.BLACK);
+        btn.setOpaque(true);
         btn.setFocusPainted(false);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btn.addActionListener(e -> action.run());
@@ -317,8 +295,6 @@ public class PacketTracerGUI extends JFrame {
     }
     
     private void switchTopology(String topo) {
-        showMST = false;
-        networkPanel.setMSTEdges(null);
         switch (topo) {
             case "Grid": graph.generateGrid(); break;
             case "Ring": graph.generateRing(); break;
@@ -330,12 +306,7 @@ public class PacketTracerGUI extends JFrame {
         networkPanel.setGraph(graph);
         recalculateRoutes();
     }
-    
-    private void openStepByStep(String algoName) {
-        randomizeStartEnd();
-        StepByStepGUI viz = new StepByStepGUI(graph, startRouter, endRouter, algoName);
-        viz.setVisible(true);
-    }
+
 
     private void updateDisplayedPath() {
         String selected = (String) algoSelector.getSelectedItem();
@@ -347,6 +318,8 @@ public class PacketTracerGUI extends JFrame {
             result = controller.getDijkstraResult();
         } else if ("Show Bellman-Ford".equals(selected)) {
             result = controller.getBellmanResult();
+        } else if ("Show BFS".equals(selected)) {
+            result = controller.getBFSResult();
         }
         
         if (result != null) {
@@ -376,6 +349,7 @@ public class PacketTracerGUI extends JFrame {
         if ("Show A*".equals(selected)) result = controller.getAStarResult();
         else if ("Show Dijkstra".equals(selected)) result = controller.getDijkstraResult();
         else if ("Show Bellman-Ford".equals(selected)) result = controller.getBellmanResult();
+        else if ("Show BFS".equals(selected)) result = controller.getBFSResult();
         
         if (result != null && result.path != null && !result.path.isEmpty()) {
             networkPanel.activePackets.add(new NetworkPanel.Packet(selected.replace("Show ", ""), result.path, new Color(52, 152, 219), 0));
@@ -410,21 +384,25 @@ public class PacketTracerGUI extends JFrame {
         PathResult aStar = controller.getAStarResult();
         PathResult dijkstra = controller.getDijkstraResult();
         PathResult bellman = controller.getBellmanResult();
+        PathResult bfs = controller.getBFSResult();
         
         String aStarNodes = (aStar != null && aStar.path != null) ? String.valueOf(aStar.nodesVisited) : "Failed";
         String dijkstraNodes = (dijkstra != null && dijkstra.path != null) ? String.valueOf(dijkstra.nodesVisited) : "Failed";
         String bellmanNodes = (bellman != null && bellman.path != null) ? String.valueOf(bellman.nodesVisited) : "Failed";
+        String bfsNodes = (bfs != null && bfs.path != null) ? String.valueOf(bfs.nodesVisited) : "Failed";
         
         String message = "🏁 Race Finished!\n\n" +
-            "Did you notice that all three packets arrived at the exact same time?\n\n" +
+            "Did you notice that most packets arrived at the exact same time?\n\n" +
             "Here is why:\n" +
             "1. A*, Dijkstra, and Bellman-Ford all guarantee finding the shortest path.\n" +
-            "2. Since they took the exact same shortest path, they traveled at the exact same speed!\n\n" +
+            "2. Since they took the exact same shortest path, they traveled at the exact same speed!\n" +
+            "   (BFS may take a different path because it finds fewest hops, not lowest cost).\n\n" +
             "So what makes them different?\n" +
             "Look at the 'Nodes Explored' on the Scoreboard for this specific race:\n" +
             "🟢 A* explored: " + aStarNodes + " nodes\n" +
             "🔵 Dijkstra explored: " + dijkstraNodes + " nodes\n" +
-            "🟣 Bellman-Ford explored: " + bellmanNodes + " nodes\n\n" +
+            "🟣 Bellman-Ford explored: " + bellmanNodes + " nodes\n" +
+            "🟠 BFS explored: " + bfsNodes + " nodes\n\n" +
             "A* explored the fewest nodes (using a smart heuristic compass), while Bellman-Ford stubbornly checked almost the entire map.\n\n" +
             "A* is the true winner in computational efficiency!";
             
@@ -442,6 +420,7 @@ public class PacketTracerGUI extends JFrame {
         int[] totalAStarNodes = {0};
         int[] totalDijkstraNodes = {0};
         int[] totalBellmanNodes = {0};
+        int[] totalBFSNodes = {0};
         
         java.util.Random rand = new java.util.Random();
         
@@ -478,6 +457,9 @@ public class PacketTracerGUI extends JFrame {
             PathResult bellman = controller.getBellmanResult();
             if (bellman != null && bellman.path != null) totalBellmanNodes[0] += bellman.nodesVisited;
             
+            PathResult bfs = controller.getBFSResult();
+            if (bfs != null && bfs.path != null) totalBFSNodes[0] += bfs.nodesVisited;
+            
             currentIter[0]++;
             
             // Once 50 tests are done, stop timer and show chart
@@ -500,6 +482,7 @@ public class PacketTracerGUI extends JFrame {
                 averages.put("A*", (double) totalAStarNodes[0] / totalIterations);
                 averages.put("Dijkstra", (double) totalDijkstraNodes[0] / totalIterations);
                 averages.put("Bellman-Ford", (double) totalBellmanNodes[0] / totalIterations);
+                averages.put("BFS", (double) totalBFSNodes[0] / totalIterations);
                 
                 BenchmarkChartGUI chart = new BenchmarkChartGUI(averages, totalIterations);
                 chart.setVisible(true);

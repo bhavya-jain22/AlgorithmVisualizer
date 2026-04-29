@@ -10,10 +10,8 @@ public class NetworkPanel extends JPanel {
     private Runnable onGraphChanged;
     
     public List<Packet> activePackets = new java.util.ArrayList<>();
-    private java.util.List<KruskalMST.Edge> mstEdges = null;
 
     public void setGraph(NetworkGraph g) { this.graph = g; repaint(); }
-    public void setMSTEdges(java.util.List<KruskalMST.Edge> edges) { this.mstEdges = edges; repaint(); }
 
     // Classic Modern Color Palette
     private final Color BG_DARK = new Color(245, 245, 250);
@@ -129,22 +127,6 @@ public class NetworkPanel extends JPanel {
                     Router a = activePath.get(i);
                     Router b = activePath.get(i + 1);
                     g2d.drawLine(a.x, a.y, b.x, b.y);
-                }
-            }
-            
-            // Draw MST (Kruskal) edges in golden colour
-            if (mstEdges != null) {
-                g2d.setColor(new Color(243, 156, 18));
-                g2d.setStroke(new BasicStroke(4.0f));
-                for (KruskalMST.Edge e : mstEdges) {
-                    g2d.drawLine(e.from.x, e.from.y, e.to.x, e.to.y);
-                    // Show edge weight
-                    int mx = (e.from.x + e.to.x) / 2;
-                    int my = (e.from.y + e.to.y) / 2;
-                    g2d.setColor(new Color(180, 100, 0));
-                    g2d.setFont(new Font("Arial", Font.BOLD, 11));
-                    g2d.drawString(String.valueOf(e.weight), mx, my - 5);
-                    g2d.setColor(new Color(243, 156, 18));
                 }
             }
 
