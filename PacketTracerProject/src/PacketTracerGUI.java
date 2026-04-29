@@ -223,6 +223,29 @@ public class PacketTracerGUI extends JFrame {
         updateScoreboard();
         updateDisplayedPath();
         updateBigO();
+        
+        // Dynamically update active packets to follow the new paths
+        if (networkPanel != null && !networkPanel.activePackets.isEmpty()) {
+            java.util.Iterator<NetworkPanel.Packet> it = networkPanel.activePackets.iterator();
+            while (it.hasNext()) {
+                NetworkPanel.Packet p = it.next();
+                PathResult newResult = null;
+                if (p.name.equals("A*")) newResult = controller.getAStarResult();
+                else if (p.name.equals("Dijkstra")) newResult = controller.getDijkstraResult();
+                else if (p.name.startsWith("Bellman")) newResult = controller.getBellmanResult();
+                else if (p.name.equals("BFS")) newResult = controller.getBFSResult();
+                
+                if (newResult != null && newResult.path != null && !newResult.path.isEmpty()) {
+                    p.path = newResult.path;
+                    p.pathIndex = 0;
+                    p.progress = 0;
+                    p.drawX = p.path.get(0).x;
+                    p.drawY = p.path.get(0).y;
+                } else {
+                    it.remove(); // No path found, drop packet
+                }
+            }
+        }
     }
 
     private void updateScoreboard() {
