@@ -16,9 +16,10 @@ public class AStarSolver {
         }
     }
 
-    // Distance between two routers
+    // Distance between two routers (scaled down to remain admissible)
     private int getHeuristic(Router a, Router b) {
-        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+        // Grid spacing is 55, min cable weight is 1. Dividing by 55 ensures h(n) <= true cost.
+        return (Math.abs(a.x - b.x) + Math.abs(a.y - b.y)) / 55;
     }
 
     public PathResult solve(NetworkGraph graph, Router start, Router target) {
