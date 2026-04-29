@@ -224,6 +224,10 @@ public class PacketTracerGUI extends JFrame {
         updateDisplayedPath();
         updateBigO();
         
+        if (networkPanel != null) {
+            networkPanel.setEndpoints(startRouter, endRouter);
+        }
+        
         // Dynamically update active packets to follow the new paths
         if (networkPanel != null && !networkPanel.activePackets.isEmpty()) {
             java.util.Iterator<NetworkPanel.Packet> it = networkPanel.activePackets.iterator();

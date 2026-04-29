@@ -10,6 +10,14 @@ public class NetworkPanel extends JPanel {
     private Runnable onGraphChanged;
     
     public List<Packet> activePackets = new java.util.ArrayList<>();
+    public Router sourceNode;
+    public Router destNode;
+
+    public void setEndpoints(Router source, Router dest) {
+        this.sourceNode = source;
+        this.destNode = dest;
+        repaint();
+    }
 
     public void setGraph(NetworkGraph g) { this.graph = g; repaint(); }
 
@@ -136,6 +144,14 @@ public class NetworkPanel extends JPanel {
                 if (activePath != null && activePath.contains(r)) {
                     g2d.setColor(PATH_COLOR);
                 }
+                
+                // Highlight endpoints
+                if (r == sourceNode) {
+                    g2d.setColor(new Color(46, 204, 113)); // Green for Start
+                } else if (r == destNode) {
+                    g2d.setColor(new Color(231, 76, 60)); // Red for Destination
+                }
+                
                 g2d.fillOval(r.x - 15, r.y - 15, 30, 30);
                 
                 g2d.setColor(Color.WHITE);
