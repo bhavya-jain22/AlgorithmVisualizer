@@ -229,20 +229,24 @@ public class PacketTracerGUI extends JFrame {
             java.util.Iterator<NetworkPanel.Packet> it = networkPanel.activePackets.iterator();
             while (it.hasNext()) {
                 NetworkPanel.Packet p = it.next();
+                
+                // Get the router the packet is currently at (or just left)
+                Router currentPos = p.path.get(p.pathIndex);
+                
                 PathResult newResult = null;
-                if (p.name.equals("A*")) newResult = controller.getAStarResult();
-                else if (p.name.equals("Dijkstra")) newResult = controller.getDijkstraResult();
-                else if (p.name.startsWith("Bellman")) newResult = controller.getBellmanResult();
-                else if (p.name.equals("BFS")) newResult = controller.getBFSResult();
+                if (p.name.equals("A*")) newResult = new AStarSolver().solve(graph, currentPos, endRouter);
+                else if (p.name.equals("Dijkstra")) newResult = new DijkstraSolver().solve(graph, currentPos, endRouter);
+                else if (p.name.startsWith("Bellman")) newResult = new BellmanFordSolver().solve(graph, currentPos, endRouter);
+                else if (p.name.equals("BFS")) newResult = new BFSSolver().solve(graph, currentPos, endRouter);
                 
                 if (newResult != null && newResult.path != null && !newResult.path.isEmpty()) {
                     p.path = newResult.path;
                     p.pathIndex = 0;
                     p.progress = 0;
-                    p.drawX = p.path.get(0).x;
-                    p.drawY = p.path.get(0).y;
+                    p.drawX = currentPos.x;
+                    p.drawY = currentPos.y;
                 } else {
-                    it.remove(); // No path found, drop packet
+                    it.remove(); // No path found from current position, drop packet
                 }
             }
         }
