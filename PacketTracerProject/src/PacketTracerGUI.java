@@ -86,23 +86,7 @@ public class PacketTracerGUI extends JFrame {
         
         headerPanel.add(row1);
         
-        // Second row: Topology + new features
-        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 4));
-        row2.setBackground(BG_DARK);
-        
-        JLabel topoLabel = new JLabel("Topology:");
-        topoLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        row2.add(topoLabel);
-        
-        JButton gridBtn   = makeTopologyBtn("Grid",  () -> switchTopology("Grid"));
-        JButton ringBtn   = makeTopologyBtn("Ring",  () -> switchTopology("Ring"));
-        JButton starBtn   = makeTopologyBtn("Star",  () -> switchTopology("Star"));
-        JButton meshBtn   = makeTopologyBtn("Mesh",  () -> switchTopology("Mesh"));
-        row2.add(gridBtn); row2.add(ringBtn); row2.add(starBtn); row2.add(meshBtn);
-        
 
-        
-        headerPanel.add(row2);
         add(headerPanel, BorderLayout.NORTH);
 
         // Setup Animation Timer
@@ -186,7 +170,7 @@ public class PacketTracerGUI extends JFrame {
         
         sidebar.add(Box.createVerticalGlue());
         
-        JTextArea hintText = new JTextArea("Hint: Click any cable to BREAK it. Use topology buttons to switch graph type.");
+        JTextArea hintText = new JTextArea("Hint: Click any cable to BREAK it.");
         hintText.setWrapStyleWord(true);
         hintText.setLineWrap(true);
         hintText.setEditable(false);
@@ -314,29 +298,7 @@ public class PacketTracerGUI extends JFrame {
         }
     }
     
-    private JButton makeTopologyBtn(String label, Runnable action) {
-        JButton btn = new JButton(label);
-        btn.setBackground(new Color(220, 220, 220));
-        btn.setForeground(Color.BLACK);
-        btn.setOpaque(true);
-        btn.setFocusPainted(false);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.addActionListener(e -> action.run());
-        return btn;
-    }
-    
-    private void switchTopology(String topo) {
-        switch (topo) {
-            case "Grid": graph.generateGrid(); break;
-            case "Ring": graph.generateRing(); break;
-            case "Star": graph.generateStar(); break;
-            case "Mesh": graph.generateMesh(); break;
-        }
-        startRouter = graph.allRouters.get(0);
-        endRouter = graph.allRouters.get(graph.allRouters.size() - 1);
-        networkPanel.setGraph(graph);
-        recalculateRoutes();
-    }
+
 
 
     private void updateDisplayedPath() {
